@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comment;
 use App\Models\Post;
-use Illuminate\Http\Request;
+use App\Models\Comment;
+use App\Http\Requests\Post\PostRequest;
+use App\Http\Requests\PostUpdateRequest;
 
 class PostController extends Controller
 {
     public function index()
     {
-        return view('posts.index', [
-            'posts' => Post::with('user')
-                ->orderByDesc('created_at')
-                ->paginate(10)
-        ]);
+        $posts = Post::orderByDesc('created_at')->paginate(10);
+
+        return view('posts.index', compact('posts'));
     }
 
     public function create()
@@ -22,53 +21,42 @@ class PostController extends Controller
         return view('posts.create');
     }
 
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
-        $post = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'excerpt' => 'required|string',
-            'img_path' => 'nullable|string',
-        ]);
+        $post = $request->validated();
         $post['user_id'] = auth()->id();
         Post::create($post);
 
-        return redirect('/');
+        return redirect()->route('post.index');
     }
 
-    public function show($id)
+    public function show(Post $post)
     {
-        return view('posts.show', [
-            'post' => Post::get($id),
-            'comments' => Comment::where('post_id', $id)
-        ]);
+        $comments = Comment::where('post_id', $post->id)->orderByDesc('created_at')->paginate(25);
+
+        return view('posts.show', compact('post', 'comments'));
     }
 
     public function edit(Post $post)
     {
-        return $post->user->id === auth()->id()
-            ? view('posts.edit', ['post' => $post])
-            : redirect()->back();
+        if ($post->user_id === auth()->id())
+            return view('posts.edit', compact('post'));
+
+        return redirect()->back();
     }
 
-    public function update(Request $request, Post $post)
+    public function update(PostUpdateRequest $request, Post $post)
     {
-        $post->update($request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'excerpt' => 'required|string',
-            'img_path' => 'nullable|string',
-        ]));
+        $post->update($request->validated());
 
-        return redirect('/');
+        return redirect()->route('post.index');
     }
 
     public function destroy(Post $post)
     {
-        if ($post->user_id === auth()->id()) {
+        if ($post->user_id === auth()->id())
             $post->delete();
-            return redirect('/');
-        }
+
         return redirect()->back();
     }
 }

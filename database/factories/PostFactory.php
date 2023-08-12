@@ -12,11 +12,13 @@ class PostFactory extends Factory
 
     public function definition(): array
     {
+        $user = User::inRandomOrder()->first() ?? User::create();
+
         return [
             'title' => $this->faker->sentence,
             'content' => $this->faker->paragraphs(3, true),
             'excerpt' => $this->faker->sentence,
-            'user_id' => User::all()->random()->id,
+            'user_id' => $user->id,
         ];
     }
 }

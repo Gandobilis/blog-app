@@ -1,11 +1,11 @@
 <div
-    class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col justify-between">
-    <a href="#">
+    class="max-w-sm bg-white rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col justify-between">
+    <a href="{{route('post.show', $post)}}">
         <img class="rounded-t-lg" src="https://flowbite.com/docs/images/blog/image-1.jpg" alt=""
              loading="lazy"/>
     </a>
     @auth
-        @if(auth()->user()->id === $post->user->id)
+        @if(auth()->id() === $post->user_id)
             <div x-data="{open: false}"
                  class="relative flex justify-end px-4 pt-4">
                 <button @click="open = !open" id="dropdownButton" data-dropdown-toggle="dropdown"
@@ -21,18 +21,18 @@
                 </button>
                 <!-- Dropdown menu -->
                 <div x-show="open" @click.outside="open = false" id="dropdown"
-                     class="absolute top-14 z-10 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-                    <ul class="py-2" aria-labelledby="dropdownButton">
+                     class="absolute top-14 z-10 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow w-24 dark:bg-gray-700">
+                    <ul class="flex flex-col px-1 py-2" aria-labelledby="dropdownButton">
                         <li>
-                            <a href="{{ route('post.edit', ['post' => $post]) }}"
-                               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Edit</a>
+                            <a href="{{ route('post.edit', $post) }}"
+                               class="text-center rounded-sm block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Edit</a>
                         </li>
                         <li>
-                            <form action="{{ route('post.destroy', ['post' => $post]) }}" method="POST">
+                            <form action="{{ route('post.destroy', $post) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
                                 <button
-                                    class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                    class="w-full block rounded-sm px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
                                     Delete
                                 </button>
                             </form>
@@ -44,13 +44,13 @@
     @endauth
 
     <div class="p-5">
-        <a href="#">
+        <a href="{{route('post.show', $post)}}">
             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Noteworthy
                 {{$post->title}}</h5>
         </a>
         <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise
             {{$post->excerpt}}</p>
-        <a href="#"
+        <a href="{{route('post.show', $post)}}"
            class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
             Read more
             <svg class="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
