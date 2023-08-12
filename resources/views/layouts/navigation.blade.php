@@ -18,7 +18,7 @@
                 </div>
             </div>
 
-            @auth()
+            @auth
                 <!-- Settings Dropdown -->
                 <div class="hidden sm:flex sm:items-center sm:ml-6">
                     <a href="{{route('post.create')}}"

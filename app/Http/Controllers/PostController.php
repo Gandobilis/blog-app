@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use App\Models\Comment;
 use App\Http\Requests\Post\PostRequest;
 use App\Http\Requests\PostUpdateRequest;
 
@@ -11,52 +10,51 @@ class PostController extends Controller
 {
     public function index()
     {
-        $posts = Post::orderByDesc('created_at')->paginate(10);
-
-        return view('posts.index', compact('posts'));
+        return view('posts.index', [
+            'posts' => Post::withCount('comments')
+                ->orderByDesc('created_at')
+                ->paginate(12)
+        ]);
     }
 
     public function create()
     {
-        return view('posts.create');
+        return auth()->id() ? view('posts.create') : back();
     }
 
     public function store(PostRequest $request)
     {
-        $post = $request->validated();
-        $post['user_id'] = auth()->id();
-        Post::create($post);
-
+        auth()->user()->posts()->create($request->validated());
         return redirect()->route('post.index');
     }
 
     public function show(Post $post)
     {
-        $comments = Comment::where('post_id', $post->id)->orderByDesc('created_at')->paginate(25);
-
-        return view('posts.show', compact('post', 'comments'));
+        return view('posts.show', [
+            'post' => $post,
+            'comments' => $post->comments()
+                ->orderByDesc('created_at')
+                ->paginate(10)
+        ]);
     }
 
     public function edit(Post $post)
     {
-        if ($post->user_id === auth()->id())
-            return view('posts.edit', compact('post'));
-
-        return redirect()->back();
+        return ($post->user_id === auth()->id()
+            ? view('posts.edit', compact('post'))
+            : back());
     }
 
     public function update(PostUpdateRequest $request, Post $post)
     {
         $post->update($request->validated());
-
-        return redirect()->route('post.index');
+        return redirect("/post/" . $post->id);
     }
 
     public function destroy(Post $post)
     {
         if ($post->user_id === auth()->id())
             $post->delete();
-
-        return redirect()->back();
+        return back();
     }
 }

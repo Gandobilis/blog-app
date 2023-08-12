@@ -19,12 +19,9 @@ class CommentFactory extends Factory
      */
     public function definition(): array
     {
-        $randomUser = User::inRandomOrder()->first() ?? User::create();
-        $randomPost = $randomUser->posts()->inRandomOrder()->first() ?? Post::create();
-
         return [
-            'user_id' => $randomUser->id,
-            'post_id' => $randomPost->id,
+            'user_id' => User::inRandomOrder()->first()->id,
+            'post_id' => Post::inRandomOrder()->first()->id,
             'content' => $this->faker->paragraph,
         ];
     }
