@@ -2,73 +2,61 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comment;
 use App\Models\Post;
-use Illuminate\Http\Request;
+use App\Http\Requests\Post\PostRequest;
+use App\Http\Requests\PostUpdateRequest;
 
 class PostController extends Controller
 {
     public function index()
     {
         return view('posts.index', [
-            'posts' => Post::with('user')
+            'posts' => Post::withCount('comments')
                 ->orderByDesc('created_at')
-                ->paginate(10)
+                ->paginate(12)
         ]);
     }
 
     public function create()
     {
-        return view('posts.create');
+        return auth()->id() ? view('posts.create') : back();
     }
 
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
-        $post = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'excerpt' => 'required|string',
-            'img_path' => 'nullable|string',
-        ]);
-        $post['user_id'] = auth()->id();
-        Post::create($post);
-
-        return redirect('/');
+        auth()->user()->posts()->create($request->validated());
+        return redirect()->route('post.index');
     }
 
-    public function show($id)
+    public function show(Post $post)
     {
         return view('posts.show', [
-            'post' => Post::get($id),
-            'comments' => Comment::where('post_id', $id)
+            'post' => $post,
+            'comments' => $post->comments()
+                ->orderByDesc('created_at')
+                ->paginate(10)
         ]);
     }
 
     public function edit(Post $post)
     {
-        return $post->user->id === auth()->id()
-            ? view('posts.edit', ['post' => $post])
-            : redirect()->back();
+        return ($post->user_id === auth()->id()
+            ? view('posts.edit', compact('post'))
+            : back());
     }
 
-    public function update(Request $request, Post $post)
+    public function update(PostUpdateRequest $request, Post $post)
     {
-        $post->update($request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'excerpt' => 'required|string',
-            'img_path' => 'nullable|string',
-        ]));
-
-        return redirect('/');
+        $post->update($request->validated());
+        return redirect("/post/" . $post->id);
     }
 
     public function destroy(Post $post)
     {
         if ($post->user_id === auth()->id()) {
             $post->delete();
-            return redirect('/');
-        }
-        return redirect()->back();
+            return back();
+        } else
+            abort(403, 'Unauthorized action.');
     }
 }
