@@ -10,13 +10,16 @@ class CommentController extends Controller
 {
     public function store(CommentRequest $request)
     {
-        Comment::create($request->validated());
+        $comment = $request->validated();
+        $comment['user_id'] = auth()->id();
+        Comment::create($comment);
         return back();
     }
 
     public function update(CommentUpdateRequest $request, Comment $comment)
     {
-        $comment->update($request->validated());
+        if (auth()->id === $comment->user_id)
+            $comment->update($request->validated());
         return back();
     }
 
