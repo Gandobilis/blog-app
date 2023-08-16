@@ -10,21 +10,22 @@ class PostController extends Controller
 {
     public function index()
     {
-        return view('posts.index', [
-            'posts' => Post::withCount('comments')
-                ->orderByDesc('created_at')
-                ->paginate(12)
-        ]);
+        $posts = Post::withCount('comments')
+            ->orderByDesc('created_at')
+            ->paginate(12);
+        return view('posts.index', compact('posts'));
     }
 
     public function create()
     {
-        return auth()->id() ? view('posts.create') : back();
+        return view('posts.create');
     }
 
     public function store(PostRequest $request)
     {
-        auth()->user()->posts()->create($request->validated());
+        $postData = $request->validated();
+        auth()->user()->posts()->create($postData);
+
         return redirect()->route('post.index');
     }
 
@@ -42,21 +43,22 @@ class PostController extends Controller
     {
         return ($post->user_id === auth()->id()
             ? view('posts.edit', compact('post'))
-            : back());
+            : redirect()->back());
     }
 
     public function update(PostUpdateRequest $request, Post $post)
     {
         $post->update($request->validated());
-        return redirect("/post/" . $post->id);
+        return redirect()->back();
     }
 
     public function destroy(Post $post)
     {
         if ($post->user_id === auth()->id()) {
             $post->delete();
-            return back();
-        } else
+            return redirect()->route('post.index');
+        } else {
             abort(403, 'Unauthorized action.');
+        }
     }
 }

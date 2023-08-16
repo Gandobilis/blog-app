@@ -8,6 +8,29 @@
         <p class="mb-3 font-normal text-2xl">
             {{$post->content}}</p>
     </div>
+    @if(auth()->id() === $post->user_id)
+        <div>
+            <ul class="flex gap-x-2 px-1 py-2" aria-labelledby="dropdownButton">
+                <li>
+                    <a href="{{ route('post.edit', $post) }}">
+                        <x-secondary-button>
+                            {{__('Edit')}}
+                        </x-secondary-button>
+                    </a>
+                </li>
+                <li>
+                    <form action="{{ route('post.destroy', $post) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <x-primary-button type="submit">
+                            {{__('Delete')}}
+                        </x-primary-button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    @endif
+
     <hr/>
     @auth
         <form method="POST" class="space-y-2" action="{{route('comment.store')}}">
@@ -21,7 +44,6 @@
                           required autocomplete="current-content"/>
             <x-primary-button type="submit">
                 <input type="hidden" value="{{$post->id}}" name="post_id">
-                <input type="hidden" value="{{auth()->id()}}" name="user_id">
                 Add <i class="ml-1 fa-solid fa-comment"></i>
             </x-primary-button>
         </form>

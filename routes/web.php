@@ -16,15 +16,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::get('/', [PostController::class, 'index'])->name('post.index');
-Route::get('/post/{post} ', [PostController::class, 'show'])->name('post.show');
-Route::get('/post/create', [PostController::class, 'create'])->name('post.create');
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::resource('/post', PostController::class)->names('post')->except('index', 'show', 'create');
+    Route::resource('/post', PostController::class)->names('post')->except('index', 'show');
     Route::resource('/comment', CommentController::class)->names('comment')->only('store', 'update', 'destroy');
 });
+Route::get('/post/{post} ', [PostController::class, 'show'])->name('post.show');
 
 require __DIR__ . '/auth.php';
