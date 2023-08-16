@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Http\Requests\Post\PostRequest;
-use App\Http\Requests\PostUpdateRequest;
+
 
 class PostController extends Controller
 {
@@ -23,10 +23,11 @@ class PostController extends Controller
 
     public function store(PostRequest $request)
     {
-        $postData = $request->validated();
-        auth()->user()->posts()->create($postData);
+        $data = $request->validated();
+        $data['user_id'] = auth()->id();
+        Post::create($data);
 
-        return back();
+        return redirect()->route('post.index');
     }
 
     public function show(Post $post)
@@ -46,12 +47,11 @@ class PostController extends Controller
             : back());
     }
 
-    public function update(PostUpdateRequest $request, Post $post)
+    public function update(PostRequest $request, Post $post)
     {
-        if ($post->user_id === auth()->id())
-            $post->update($request->validated());
+        $post->update($request->validated());
 
-        return back();
+        return redirect()->route('post.index');
     }
 
     public function destroy(Post $post)

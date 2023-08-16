@@ -44,22 +44,22 @@
         <x-primary-button type="submit">
             Add <i class="ml-1 fa-solid fa-comment"></i>
         </x-primary-button>
-        <div class="flex items-center gap-x-2">
-            @if(auth()->id() !== $post->user_id)
-                <form class="inline" action="{{ route('posts.toggleLike', $post) }}" method="POST">
-                    @csrf
-                    <button type="submit">
-                        @if($post->likes->contains(auth()->id()))
-                            <i class="fa-solid fa-thumbs-up text-blue-700"></i>
-                        @else
-                            <i class="fa-regular fa-thumbs-up"></i>
-                        @endif
-                    </button>
-                </form>
-            @endif
-            <p>{{$post->likes()->count()}} Likes</p>
-        </div>
     </form>
+    <div class="flex items-center gap-x-2 mt-1">
+        @if(auth()->id() !== $post->user_id)
+            <form class="inline" action="{{ route('posts.toggleLike', $post) }}" method="POST">
+                @csrf
+                <button type="submit">
+                    @if($post->likes->contains(auth()->id()))
+                        <i class="fa-solid fa-thumbs-up text-blue-700"></i>
+                    @else
+                        <i class="fa-regular fa-thumbs-up"></i>
+                    @endif
+                </button>
+            </form>
+        @endif
+        <p>{{$post->likes()->count()}} Likes</p>
+    </div>
     <div class="flex items-center gap-x-2">
         <div class="flex flex-col gap-y-5 mt-10">
             <x-comments :comments="$comments"/>
