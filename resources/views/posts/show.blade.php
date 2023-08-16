@@ -32,20 +32,18 @@
     @endif
 
     <hr/>
-    @auth
-        <form method="POST" class="space-y-2" action="{{route('comment.store', $post)}}">
-            @csrf
-            <x-input-label for="content"/>
-            <x-text-input id="content" class="block w-full"
-                          type="content"
-                          name="content"
-                          placeholder="Comment"
-                          class="block w-1/2 px-2 py-3"
-                          required autocomplete="current-content"/>
-            <x-primary-button type="submit">
-                Add <i class="ml-1 fa-solid fa-comment"></i>
-            </x-primary-button>
-        </form>
+    <form method="POST" class="space-y-2" action="{{route('comment.store', $post)}}">
+        @csrf
+        <x-input-label for="content"/>
+        <x-text-input id="content" class="block w-full"
+                      type="content"
+                      name="content"
+                      placeholder="Comment"
+                      class="block w-1/2 px-2 py-3"
+                      required autocomplete="current-content"/>
+        <x-primary-button type="submit">
+            Add <i class="ml-1 fa-solid fa-comment"></i>
+        </x-primary-button>
         <div class="flex items-center gap-x-2">
             @if(auth()->id() !== $post->user_id)
                 <form class="inline" action="{{ route('posts.toggleLike', $post) }}" method="POST">
@@ -61,9 +59,11 @@
             @endif
             <p>{{$post->likes()->count()}} Likes</p>
         </div>
-    @endauth
-    <div class="flex flex-col gap-y-5 mt-10">
-        <x-comments :comments="$comments"/>
-        {{ $comments->links() }}
+    </form>
+    <div class="flex items-center gap-x-2">
+        <div class="flex flex-col gap-y-5 mt-10">
+            <x-comments :comments="$comments"/>
+            {{ $comments->links() }}
+        </div>
     </div>
 </x-app-layout>
