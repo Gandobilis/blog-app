@@ -24,6 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/post', PostController::class)->names('post')->except('index', 'show');
     Route::resource('/comment', CommentController::class)->names('comment')->only('store', 'update', 'destroy');
 
+    Route::post('/posts/{post}/toggleLike', [PostController::class, 'toggleLike'])->name('posts.toggleLike');
     Route::post('/comments/{comment}/toggleLike', [CommentController::class, 'toggleLike'])->name('comments.toggleLike');
 });
 Route::get('/post/{post} ', [PostController::class, 'show'])->name('post.show');

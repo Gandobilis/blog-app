@@ -10,7 +10,7 @@ class PostController extends Controller
 {
     public function index()
     {
-        $posts = Post::withCount('comments')
+        $posts = Post::withCount('comments', 'likes')
             ->orderByDesc('created_at')
             ->paginate(12);
         return view('posts.index', compact('posts'));
@@ -26,7 +26,7 @@ class PostController extends Controller
         $postData = $request->validated();
         auth()->user()->posts()->create($postData);
 
-        return redirect()->route('post.index');
+        return back();
     }
 
     public function show(Post $post)
@@ -43,13 +43,15 @@ class PostController extends Controller
     {
         return ($post->user_id === auth()->id()
             ? view('posts.edit', compact('post'))
-            : redirect()->back());
+            : back());
     }
 
     public function update(PostUpdateRequest $request, Post $post)
     {
-        $post->update($request->validated());
-        return redirect()->back();
+        if ($post->user_id === auth()->id())
+            $post->update($request->validated());
+
+        return back();
     }
 
     public function destroy(Post $post)
@@ -60,5 +62,14 @@ class PostController extends Controller
         } else {
             abort(403, 'Unauthorized action.');
         }
+    }
+
+    public function toggleLike(Post $post)
+    {
+        $post->likes->contains(auth()->id()) ?
+            $post->likes()->detach(auth()->id()) :
+            $post->likes()->attach(auth()->id());
+
+        return back();
     }
 }

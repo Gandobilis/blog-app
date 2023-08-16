@@ -38,12 +38,16 @@
     @endif
     <div class="flex items-center gap-x-2">
         @if(auth()->id() !== $comment->user_id)
-        <form class="inline" action="{{ route('comments.toggleLike', $comment) }}" method="POST">
-            @csrf
-            <button type="submit">
-                <i class="fa-solid fa-thumbs-up text-blue-700"></i>
-            </button>
-        </form>
+            <form class="inline" action="{{ route('comments.toggleLike', $comment) }}" method="POST">
+                @csrf
+                <button type="submit">
+                    @if($comment->likes->contains(auth()->id()))
+                        <i class="fa-solid fa-thumbs-up"></i>
+                    @else
+                        <i class="fa-regular fa-thumbs-up"></i>
+                    @endif
+                </button>
+            </form>
         @endif
         <p>{{$comment->likes->count()}} Likes</p>
     </div>

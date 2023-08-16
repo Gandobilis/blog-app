@@ -53,8 +53,8 @@
             <a href="{{ route('post.show', $post) }}">
                 <div class="space-x-2 hover:transform hover:scale-105 hover:duration-150">
                     <i class="fa-solid fa-thumbs-up text-white"></i>
-                    <sup style="color: #59CE8F;">
-                        {{random_int(0, 10)}}
+                    <sup class="text-blue-400">
+                        {{$post->likes_count}}
                     </sup>
                     <i class="fa-regular fa-comment text-white"></i>
                     <sup class="text-indigo-500" style="color: #F05454;">
