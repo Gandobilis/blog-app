@@ -1,5 +1,5 @@
 <x-app-layout>
-    <form :action="route('post.store')" method="POST">
+    <form action="{{route('post.store')}}" method="POST" enctype="multipart/form-data">
         @csrf
         <!-- Title -->
         <div>
@@ -12,8 +12,9 @@
         <!-- Excerpt Address -->
         <div class="mt-4">
             <x-input-label for="excerpt" :value="__('Excerpt')"/>
-            <x-text-input id="excerpt" class="block mt-1 w-full" type="excerpt" name="excerpt" :value="old('excerpt')"
-                          required autocomplete="username"/>
+            <x-text-input id="excerpt" class="block outline-indigo-600 mt-1 px-2.5 py-2.5 w-full" type="excerpt"
+                          name="excerpt" :value="old('excerpt')"
+                          required autocomplete="excerpt"/>
             <x-input-error :messages="$errors->get('excerpt')" class="mt-2"/>
         </div>
 
@@ -21,12 +22,25 @@
         <div class="mt-4">
             <x-input-label for="content" :value="__('Content')"/>
 
-            <x-text-input id="content" class="block mt-1 w-full"
+            <x-text-input id="content" class="block outline-indigo-600 mt-1 px-2.5 py-2.5 w-full"
                           type="content"
                           name="content"
-                          required autocomplete="new-content"/>
+                          :value="old('content')"
+                          required autocomplete="content"/>
 
             <x-input-error :messages="$errors->get('content')" class="mt-2"/>
+        </div>
+
+        <div class="mt-4">
+            <x-input-label for="img" :value="__('Image')"/>
+
+            <x-text-input id="img" class="block outline-indigo-600 mt-1 px-2.5 py-2.5 w-full"
+                          type="file"
+                          name="img"
+                          :value="old('img')"
+                          required autocomplete="img"/>
+
+            <x-input-error :messages="$errors->get('img')" class="mt-2"/>
         </div>
 
         <div class="flex items-center justify-end mt-4">
@@ -35,7 +49,7 @@
                 {{ __('Cancel') }}
             </a>
 
-            <x-primary-button class="ml-4" type="submit">
+            <x-primary-button class="ml-4">
                 {{ __('Add') }}
             </x-primary-button>
         </div>

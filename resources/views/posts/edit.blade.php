@@ -38,13 +38,9 @@
                href="{{route('post.show', $post)}}">
                 {{ __('Cancel') }}
             </a>
-
-
-            <a href="{{ route('post.update', $post) }}">
-                <x-primary-button class="ml-4">
-                    {{ __('Edit') }}
-                </x-primary-button>
-            </a>
+            <x-primary-button class="ml-4" type="submit">
+                {{ __('Edit') }}
+            </x-primary-button>
         </div>
     </form>
 </x-app-layout>

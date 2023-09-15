@@ -23,11 +23,10 @@ class PostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'excerpt' => 'required|string',
-            'img_path' => 'nullable|string',
-            'user_id' => 'required|exists:users,id',
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'text' => 'required|string',
+            'img' => 'nullable|mimes:png,jpg'
         ];
     }
 }
